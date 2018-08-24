@@ -1,28 +1,17 @@
 
-#利用koa、MongoDB编写前后端分离的api
-用到的技术：*nodeJs、mongodb、mongoose、koa*
-<!-- # mongokoa
 
-> A Vue.js project -->
+
+##利用koa、MongoDB编写前后端分离的api
+用到的技术：*nodeJs、mongodb、mongoose、koa、koa-router、koa-bodyparser、vue*
 
 [1、前后端环境的搭建](#1前后端环境的搭建)
-
-<!-- ## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-``` -->
-
+[2、安装mongoose并构建schema](#2安装mongoose并构建schema)
+[3、用户操作的路由模块化](#3用户操作的路由模块化)
+[4、编写前端注册页面](#4编写前端注册页面)
+[5、安装koa-bodyparser处理post请求数据](#5安装koa-bodyparser处理post请求数据)
+[6、将用户输入的数据存储进数据库](#6将用户输入的数据存储进数据库)
+[7、前端处理后台处理过来的相关数据](#7前端处理后台处理过来的相关数据)
+[8、用户登录界面的实现](#8用户登录界面的实现)
 
 ### 1前后端环境的搭建：
 1. 在d盘目录下创建文件myApi
@@ -53,7 +42,7 @@ app.listen(3000, () => {
 进入浏览器输入*http://localhost:3000* 出现 hello koa 说明你安装成功了。
 
 
-### 安装mongoose并构建schema
+### 2安装mongoose并构建schema
 进入到service目录下，安装mongoose `npm install mongoose --save`，我安装的版本是：5.2.8。
 **连接mongodb数据库**
 新建：service/database/init.js 连接数据库文件
@@ -128,7 +117,7 @@ mongoose.model('myuser', myUser)
 ```
 
 **载入schema**
-下载glob，
+下载glob，并引入resolve。
 > glob 允许你使用*等符号写一个规则，
 > resolve 允许你将一些路径或将路径解析为绝对路径
 
@@ -172,8 +161,10 @@ const {connect, initSchemas} = require('./database/init.js')
      console.log(users)
 })()
 ```
+*注意哦：await一定要是在async中使用，否则会报错的哦*
+> 解释一下async是什么：async作为一个关键字放在函数前面，表示函数是一个异步函数，这意味着该函数的执行不会影响到后面函数的执行。它返回的是一个promise对象。
 
-###用户操作的路由模块化
+### 3用户操作的路由模块化
 安装koa-router
 `npm install koa-router --save` 版本号：7.4.0
 在service/api下新建一个myuser.js文件
@@ -222,7 +213,7 @@ var url = {
 module.exports = url
 ```
 
-**编写前端注册页面**
+### 4编写前端注册页面
 在src/components/pages新建一个register.vue 页面
 ```html
 <template>
@@ -303,7 +294,7 @@ export default {
 ```html
 <input type="button" @click="axiosRegister" value="马上注册">
 ```
-**安装 `koa-bodyparser` 处理post请求数据**
+### 5安装koa-bodyparser处理post请求数据
 `npm install koa-bodyparser --save`
 安装完成之后在service/index.js中引入koa-bodyparser并注册使用
 *注意： body-parser要在route之前调用，否则会接收不到数据！因为你要先获取数据，然后通过路由。*
@@ -333,7 +324,7 @@ npm run dev
 ```
 进入浏览器输入 http://localhost:8080/register 输入用户名和密码，点击提交，在终端上可以看到你所输入的值，则表示成功了。
 
-##将用户输入的数据存储进数据库
+### 6将用户输入的数据存储进数据库
 进入到service/api/myuser.js 中修改相关代码
 ```javascript
 // 引入mongoose
@@ -362,7 +353,7 @@ router.post('/register', async (ctx) => {
 })
 ```
 
-**前端处理后台处理过来的相关数据**
+### 7前端处理后台处理过来的相关数据
 
 在register.vue中在页面展示相应的注册状态：成功或者失败，注册成功则提示成功，并返回到首页，注册失败则提醒用户注册失败
 ```javascript
@@ -395,7 +386,7 @@ axiosRegister() {
 ```
 注册页面已经完成啦！撒花花。
 
-##用户登录界面的实现
+### 8用户登录界面的实现
 1、 在pages目录下新建一个login.vue，其实和注册页面类似，你可以直接复制粘贴，然后改一些文字即可
 ```html
 <div>
